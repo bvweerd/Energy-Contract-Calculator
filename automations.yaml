@@ -1,0 +1,18 @@
+alias: Energiecontract waardes resetten op startdatum
+description: ""
+triggers:
+  - trigger: time
+    at: input_datetime.energycontract_startdate
+conditions: []
+actions:
+  - action: utility_meter.calibrate
+    metadata: {}
+    data:
+      value: "0"
+    target:
+      entity_id:
+        - sensor.electricity_meter_consumption_tariff_1_since_contract_start
+        - sensor.electricity_meter_consumption_tariff_2_since_contract_start
+        - sensor.electricity_meter_production_tariff_1_since_contract_start
+        - sensor.electricity_meter_production_tariff_2_since_contract_start
+mode: single

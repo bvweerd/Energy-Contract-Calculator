@@ -31,6 +31,13 @@ input_number:
     step: 0.00001
     unit_of_measurement: "€"
     mode: box
+  electricity_balancing_fee_per_kwh:
+    name: "Terugleverkosten per kWh"
+    min: 0
+    max: 1
+    step: 0.00001
+    unit_of_measurement: "€"
+    mode: box 
   electricity_tax_per_kwh:
     name: "Elektriciteit belasting per kWh"
     min: 0
@@ -52,7 +59,34 @@ input_number:
     step: 0.00001
     unit_of_measurement: "€"
     mode: box      
-        
+  gas_cost:
+    name: "Gaskosten per m3"
+    min: 0
+    max: 10
+    step: 0.00001
+    unit_of_measurement: "€"
+    mode: box
+  gas_tax:
+    name: "Gas belasting per m3"
+    min: 0
+    max: 1
+    step: 0.00001
+    unit_of_measurement: "€"
+    mode: box
+  gas_fixed_fee_day:
+    name: "Gas vastrecht per dag"
+    min: 0
+    max: 10
+    step: 0.00001
+    unit_of_measurement: "€"
+    mode: box    
+    
+input_boolean:
+  use_balancing_kwh_scale:
+    name: "use kWh scale for balancing"
+  use_balancing_per_kwh:
+    name: "use per kWh for balancing"
+    
 template:
   - sensor:
       - name: "Energie Electriciteitskosten"
@@ -112,32 +146,43 @@ template:
                  9999 :  1045
                  }
             %}
-            {% for i in kwh_scale %}
-              {% if total_production < i %}
-                {% set ns.scale = kwh_scale[i] %}
-                {% break %}
-              {% endif %}
-            {% endfor %}
+            {% if states('input_boolean.use_balancing_kwh_scale') %}
+                {% for i in kwh_scale %}
+                  {% if total_production < i %}
+                    {% set ns.scale = kwh_scale[i] %}
+                    {% break %}
+                  {% endif %}
+                {% endfor %}
+            {% elif states('input_boolean.use_balancing_per_kwh') %}
+                {% set ns.scale = states('electricity_balancing_fee_per_kwh') | float(0) * total_production %}
+            {% endif %}
             {{ fixed_fee + energytax + fixed_fee_return + ns.balancing + energiecost_tariff_1 + energiecost_tariff_2 + ns.scale}}
-
+      - name: "Energie Gaskosten"
+        unique_id: energy_gascost_id
+        unit_of_measurement: "€"
+        state: >
+            {% set dayssincestart = ((as_timestamp(now()) - as_timestamp(states('input_datetime.energycontract_startdate'))) / 60 /1440) | int(0) %}
+            {% set fixed_fee = dayssincestart * states('input_number.gas_fixed_fee_day') | float(0) | float(0) %}
+            {% set energytax = states('sensor.gas_meter_since_contract_start') | float(0) * states('input_number.gas_tax') | float(0) %}
+            {% set energycost = states('sensor.gas_meter_since_contract_start') | float(0) * states('input_number.gas_cost') | float(0) %}
+            {{ fixed_fee + energytax + energycost }}
 
 utility_meter:
   electricity_meter_consumption_tariff_1_since_contract_start:
     unique_id: electricity_meter_consumption_tariff_1_since_contract_start_id
     source: sensor.energy_consumption_tarif_1
-    cycle: yearly
   electricity_meter_consumption_tariff_2_since_contract_start:
     unique_id: electricity_meter_consumption_tariff_2_since_contract_start_id
     source: sensor.energy_consumption_tarif_2
-    cycle: yearly
   electricity_meter_production_tariff_1_since_contract_start:
     unique_id: electricity_meter_production_tariff_1_since_contract_start_id
     source: sensor.energy_production_tarif_1
-    cycle: yearly
   electricity_meter_production_tariff_2_since_contract_start:
     unique_id: electricity_meter_production_tariff_2_since_contract_start_id
     source: sensor.energy_production_tarif_2
-    cycle: yearly
+  gas_meter_since_contract_start:
+    unique_id: gas_meter_since_contract_start_id
+    source: sensor.gas_consumption
     
 input_datetime:
   energycontract_startdate:

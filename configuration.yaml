@@ -59,33 +59,66 @@ template:
         unique_id: energy_electricitycost_id
         unit_of_measurement: "€"
         state: >
+            {% set ns = namespace(scale=0, balancing=0) %} 
             {% set balance_tariff_1 = states('sensor.electricity_meter_consumption_tariff_1_since_contract_start') | float(0) - states('sensor.electricity_meter_production_tariff_1_since_contract_start') | float(0) %}
             {% set balance_tariff_2 = states('sensor.electricity_meter_consumption_tariff_2_since_contract_start') | float(0) - states('sensor.electricity_meter_production_tariff_2_since_contract_start') | float(0) %}
             {% set total_balance = balance_tariff_1 + balance_tariff_2 %}
+            {% set total_production = states('sensor.electricity_meter_production_tariff_1_since_contract_start') | float(0) + states('sensor.electricity_meter_production_tariff_2_since_contract_start') | float(0) %}
             {% if total_balance > 0 %}
                 {% set energytax = total_balance * states('input_number.electricity_tax_per_kwh') | float(0) %}
             {% else %}
                 {% set energytax = 0 %}
             {% endif %}
-            {% set dayssincestart = ((as_timestamp(now()) - as_timestamp(states('input_datetime.energycontract_startdate'))) / 60 /1440) | round(0) %}
+            {% set dayssincestart = ((as_timestamp(now()) - as_timestamp(states('input_datetime.energycontract_startdate'))) / 60 /1440) | int(0) %}
             {% set fixed_fee = dayssincestart * states('input_number.electricity_fixed_fee_day') | float(0) | float(0) %}
             {% set fixed_fee_return = dayssincestart * states('input_number.electricity_fixed_return_day') | float(0) | float(0) %}
-            {% set balancing = 0 %}
             {% if balance_tariff_2 > 0 %}
                 {% set energiecost_tariff_2 = balance_tariff_2 * states('input_number.electricity_cost_tariff_2') | float(0) %}
             {% else %}
                 {% set energiecost_tariff_2 = 0 %}
-                {% set balancing = balancing + balance_tariff_2 %}
+                {% set ns.balancing = ns.balancing + balance_tariff_2 %}
             {% endif %}
-            {% if (balance_tariff_1 + balancing) > 0 %}
-                {% set energiecost_tariff_1 = (balance_tariff_1 + balancing) * states('input_number.electricity_cost_tariff_1') | float(0) %}
-                {% set balancing = 0 %}
+            {% if (balance_tariff_1 + ns.balancing) > 0 %}
+                {% set energiecost_tariff_1 = (balance_tariff_1 + ns.balancing) * states('input_number.electricity_cost_tariff_1') | float(0) %}
+                {% set ns.balancing = 0 %}
             {% else %}
                 {% set energiecost_tariff_1 = 0 %}
-                {% set balancing = balancing + balance_tariff_1 %}
+                {% set ns.balancing = ns.balancing + balance_tariff_1 %}
             {% endif %}
-            {% set balancing = -1 * balancing * states('input_number.electricity_profit') | float(0) %}
-            {{ fixed_fee + energytax + fixed_fee_return + balancing + energiecost_tariff_1 + energiecost_tariff_2}}
+            {% set ns.balancing = -1 * ns.balancing * states('input_number.electricity_profit') | float(0) %}
+            {% set kwh_scale =
+                 {
+                 999  :  0,
+                 1099 :  85,
+                 1199 :  95,
+                 1299 :  105,
+                 1399 :  115,
+                 1499 :  125,
+                 1749 :  145,
+                 1999 :  175,
+                 2249 :  205,
+                 2499 :  240,
+                 2749 :  275,
+                 2999 :  310,    
+                 3249 :  345,
+                 3499 :  370,
+                 3999 :  410,
+                 4499 :  470,
+                 4999 :  520,
+                 5999 :  605,
+                 6999 :  715,
+                 7999 :  825,
+                 8999 :  935,
+                 9999 :  1045
+                 }
+            %}
+            {% for i in kwh_scale %}
+              {% if total_production < i %}
+                {% set ns.scale = kwh_scale[i] %}
+                {% break %}
+              {% endif %}
+            {% endfor %}
+            {{ fixed_fee + energytax + fixed_fee_return + ns.balancing + energiecost_tariff_1 + energiecost_tariff_2 + ns.scale}}
 
 
 utility_meter:

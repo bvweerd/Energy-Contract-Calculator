@@ -11,3 +11,8 @@ Use the input_booleans to choose if a kWh scale or a fee per kWh has to be used.
 
 ## Gas meter
 The gas meter is the simple implementation of a cost calculations according to Dutch contracts.
+
+# Installation
+- Point the utility meters to the ones from your DSMR meter
+- Set all helpers to the correct value
+- Enjoy!

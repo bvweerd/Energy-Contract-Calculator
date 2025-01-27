@@ -71,18 +71,18 @@ template:
             {% set fixed_fee = dayssincestart * states('input_number.electricity_fixed_fee_day') | float(0) | float(0) %}
             {% set fixed_fee_return = dayssincestart * states('input_number.electricity_fixed_return_day') | float(0) | float(0) %}
             {% set balancing = 0 %}
-            {% if balance_tariff_1 > 0 %}
-                {% set energiecost_tariff_1 = balance_tariff_1 * states('input_number.electricity_cost_tariff_1') | float(0) %}
-            {% else %}
-                {% set energiecost_tariff_1 = 0 %}
-                {% set balancing = balancing + balance_tariff_1 %}
-            {% endif %}
-            {% if (balance_tariff_2 + balancing) > 0 %}
+            {% if balance_tariff_2 > 0 %}
                 {% set energiecost_tariff_2 = balance_tariff_2 * states('input_number.electricity_cost_tariff_2') | float(0) %}
-                {% set balancing = 0 %}
             {% else %}
                 {% set energiecost_tariff_2 = 0 %}
                 {% set balancing = balancing + balance_tariff_2 %}
+            {% endif %}
+            {% if (balance_tariff_1 + balancing) > 0 %}
+                {% set energiecost_tariff_1 = (balance_tariff_1 + balancing) * states('input_number.electricity_cost_tariff_1') | float(0) %}
+                {% set balancing = 0 %}
+            {% else %}
+                {% set energiecost_tariff_1 = 0 %}
+                {% set balancing = balancing + balance_tariff_1 %}
             {% endif %}
             {% set balancing = -1 * balancing * states('input_number.electricity_profit') | float(0) %}
             {{ fixed_fee + energytax + fixed_fee_return + balancing + energiecost_tariff_1 + energiecost_tariff_2}}

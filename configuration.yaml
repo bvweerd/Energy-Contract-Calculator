@@ -25,56 +25,56 @@ input_number:
     unit_of_measurement: "€"
     mode: box
   electricity_profit:
-    name: "Electricity yield after netting"
+    name: "Electricity Yield After Netting"
     min: -1
     max: 0
     step: 0.00001
     unit_of_measurement: "€"
     mode: box
   electricity_balancing_fee_per_kwh:
-    name: "Return delivery costs per kWh"
+    name: "Return Delivery Costs Per kWh"
     min: 0
     max: 1
     step: 0.00001
     unit_of_measurement: "€"
     mode: box 
   electricity_tax_per_kwh:
-    name: "Electricity tax per kWh"
+    name: "Electricity Tax Per kWh"
     min: 0
     max: 1
     step: 0.00001
     unit_of_measurement: "€"
     mode: box
   electricity_fixed_fee_day:
-    name: "Electricity fixed charge per day"
+    name: "Electricity Fixed Charge Per Day"
     min: 0
     max: 10
     step: 0.00001
     unit_of_measurement: "€"
     mode: box       
   electricity_fixed_return_day:
-    name: "Energy Tax Refund per day"
+    name: "Energy Tax Refund Per Day"
     min: -10
     max: 0
     step: 0.00001
     unit_of_measurement: "€"
     mode: box      
   gas_cost:
-    name: "Gas costs per m3"
+    name: "Gas Costs Per m3"
     min: 0
     max: 10
     step: 0.00001
     unit_of_measurement: "€"
     mode: box
   gas_tax:
-    name: "Gas tax per m3"
+    name: "Gas Tax Per m3"
     min: 0
     max: 1
     step: 0.00001
     unit_of_measurement: "€"
     mode: box
   gas_fixed_fee_day:
-    name: "Gas fixed charge per day"
+    name: "Gas Fixed Charge Per Day"
     min: 0
     max: 10
     step: 0.00001
@@ -83,9 +83,9 @@ input_number:
     
 input_boolean:
   use_balancing_kwh_scale:
-    name: "use kWh scale for balancing"
+    name: "Use kWh Scale For Balancing"
   use_balancing_per_kwh:
-    name: "use per kWh for balancing"
+    name: "Use Per kWh For Balancing"
     
 template:
   - sensor:
@@ -186,7 +186,7 @@ utility_meter:
     
 input_datetime:
   energycontract_startdate:
-    name: "Start date of the Energy Contract"
+    name: "Start Date Of The Energy Contract"
     has_date: true
     has_time: false
     

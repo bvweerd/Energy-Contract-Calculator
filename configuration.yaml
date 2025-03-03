@@ -11,70 +11,70 @@ scene: !include scenes.yaml
 
 input_number:
   electricity_cost_tariff_1:
-    name: "Elektriciteitskosten Tarief 1"
+    name: "Electricity Cost Tarif 1 (low)"
     min: 0
     max: 1
     step: 0.00001
     unit_of_measurement: "€"
     mode: box
   electricity_cost_tariff_2:
-    name: "Elektriciteitskosten Tarief 2"
+    name: "Electricity  Cost Tarif 2 (High)"
     min: 0
     max: 1
     step: 0.00001
     unit_of_measurement: "€"
     mode: box
   electricity_profit:
-    name: "Elektriciteitsopbrengst na Salderen"
+    name: "Electricity yield after netting"
     min: -1
     max: 0
     step: 0.00001
     unit_of_measurement: "€"
     mode: box
   electricity_balancing_fee_per_kwh:
-    name: "Terugleverkosten per kWh"
+    name: "Return delivery costs per kWh"
     min: 0
     max: 1
     step: 0.00001
     unit_of_measurement: "€"
     mode: box 
   electricity_tax_per_kwh:
-    name: "Elektriciteit belasting per kWh"
+    name: "Electricity tax per kWh"
     min: 0
     max: 1
     step: 0.00001
     unit_of_measurement: "€"
     mode: box
   electricity_fixed_fee_day:
-    name: "Elektriciteit vastrecht per dag"
+    name: "Electricity fixed charge per day"
     min: 0
     max: 10
     step: 0.00001
     unit_of_measurement: "€"
     mode: box       
   electricity_fixed_return_day:
-    name: "Teruggave Energiebelasting per dag"
+    name: "Energy Tax Refund per day"
     min: -10
     max: 0
     step: 0.00001
     unit_of_measurement: "€"
     mode: box      
   gas_cost:
-    name: "Gaskosten per m3"
+    name: "Gas costs per m3"
     min: 0
     max: 10
     step: 0.00001
     unit_of_measurement: "€"
     mode: box
   gas_tax:
-    name: "Gas belasting per m3"
+    name: "Gas tax per m3"
     min: 0
     max: 1
     step: 0.00001
     unit_of_measurement: "€"
     mode: box
   gas_fixed_fee_day:
-    name: "Gas vastrecht per dag"
+    name: "Gas fixed charge per day"
     min: 0
     max: 10
     step: 0.00001
@@ -89,7 +89,7 @@ input_boolean:
     
 template:
   - sensor:
-      - name: "Energie Electriciteitskosten"
+      - name: "Energy Electricity Costs"
         unique_id: energy_electricitycost_id
         unit_of_measurement: "€"
         state: >
@@ -157,7 +157,7 @@ template:
                 {% set ns.scale = states('electricity_balancing_fee_per_kwh') | float(0) * total_production %}
             {% endif %}
             {{ fixed_fee + energytax + fixed_fee_return + ns.balancing + energiecost_tariff_1 + energiecost_tariff_2 + ns.scale}}
-      - name: "Energie Gaskosten"
+      - name: "Energie Gas Costs"
         unique_id: energy_gascost_id
         unit_of_measurement: "€"
         state: >
@@ -186,7 +186,7 @@ utility_meter:
     
 input_datetime:
   energycontract_startdate:
-    name: "Startdatum Energiecontract"
+    name: "Start date of the Energy Contract"
     has_date: true
     has_time: false
     

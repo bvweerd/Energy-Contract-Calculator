@@ -1,5 +1,5 @@
-alias: Energiecontract waardes resetten op startdatum
-description: "Reset de waardes op de startdatum van het contract"
+alias: Energiecontract value reset on startdate
+description: "Reset the meter values on the startdate of the contract"
 triggers:
   - trigger: time
     at: input_datetime.energycontract_startdate

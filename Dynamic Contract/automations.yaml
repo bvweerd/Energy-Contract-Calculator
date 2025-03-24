@@ -1,3 +1,4 @@
+---
 alias: Energiecontract value reset on startdate
 description: "Reset the meter values on the startdate of the contract"
 triggers:

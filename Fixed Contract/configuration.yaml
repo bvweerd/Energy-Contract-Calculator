@@ -190,4 +190,3 @@ input_datetime:
     name: "Start Date Of The Energy Contract"
     has_date: true
     has_time: false
-

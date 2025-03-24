@@ -125,7 +125,6 @@ utility_meter:
     net_consumption: true
     source: sensor.electricity_production_tariff_2_profit_hourly
 
-
 template:
   - sensor:
       - name: "Electricity Dynamic Price"
@@ -201,7 +200,6 @@ template:
 #        unit_of_measurement: "kWh"
 #        state: >
 #          {{ states('input_number.energy_production_tarif_2') | float(0) }}
-
 
 input_datetime:
   energycontract_startdate:

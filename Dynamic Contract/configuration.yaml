@@ -89,31 +89,39 @@ utility_meter:
   electricity_meter_consumption_tariff_1_hourly:
     unique_id: electricity_meter_consumption_tariff_1_hourly_id
     source: sensor.electricity_meter_consumption_tariff_1_since_contract_start
+    net_consumption: true
     cycle: hourly
   electricity_meter_consumption_tariff_2_hourly:
     unique_id: electricity_meter_consumption_tariff_2_hourly_id
     source: sensor.electricity_meter_consumption_tariff_2_since_contract_start
+    net_consumption: true
     cycle: hourly
   electricity_meter_production_tariff_1_hourly:
     unique_id: electricity_meter_production_tariff_1_hourly_id
     source: sensor.electricity_meter_production_tariff_1_since_contract_start
+    net_consumption: true
     cycle: hourly
   electricity_meter_production_tariff_2_hourly:
     unique_id: electricity_meter_production_tariff_2_hourly_id
     source: sensor.electricity_meter_production_tariff_2_since_contract_start
+    net_consumption: true
     cycle: hourly
 
   electricity_meter_consumption_tariff_1_cost_total:
     unique_id: electricity_meter_consumption_tariff_1_cost_total_id
+    net_consumption: true
     source: sensor.electricity_consumption_tariff_1_cost_hourly
   electricity_meter_consumption_tariff_2_cost_total:
     unique_id: electricity_meter_consumption_tariff_2_cost_total_id
+    net_consumption: true
     source: sensor.electricity_consumption_tariff_2_cost_hourly
   electricity_meter_production_tariff_1_profit_total:
     unique_id: electricity_meter_production_tariff_1_profit_total_id
+    net_consumption: true
     source: sensor.electricity_production_tariff_1_profit_hourly
   electricity_meter_production_tariff_2_profit_total:
     unique_id: electricity_meter_production_tariff_2_profit_total_id
+    net_consumption: true
     source: sensor.electricity_production_tariff_2_profit_hourly
 
     

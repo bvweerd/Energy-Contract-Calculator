@@ -1,0 +1,202 @@
+# Loads default set of integrations. Do not remove.
+default_config:
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+input_number:
+  electricity_consumption_markup_per_kwh:
+    name: "Electricity Consumption Markup Per kWh"
+    min: 0
+    max: 1
+    step: 0.00001
+    unit_of_measurement: "€"
+    mode: box
+  electricity_production_markup_per_kwh:
+    name: "Electricity Production Markup Per kWh"
+    min: 0
+    max: 1
+    step: 0.00001
+    unit_of_measurement: "€"
+    mode: box
+  electricity_tax_per_kwh:
+    name: "Electricity Tax Per kWh"
+    min: 0
+    max: 1
+    step: 0.00001
+    unit_of_measurement: "€"
+    mode: box
+  tax_percentage:
+    name: "Tax Percentage"
+    min: 0
+    max: 30
+    step: 0.1
+    unit_of_measurement: "%"
+    mode: box      
+  # FOR TESTING ONLY
+  #energy_consumption_tarif_1:
+  #  name: "Energy consumption tarif 1"
+  #  min: 0
+  #  max: 10000
+  #  step: 0.1
+  #  unit_of_measurement: "kWh"
+  #  mode: box      
+  #energy_consumption_tarif_2:
+  #  name: "Energy consumption tarif 2"
+  #  min: 0
+  #  max: 10000
+  #  step: 0.1
+  #  unit_of_measurement: "kWh"
+  #  mode: box
+  #energy_production_tarif_1:
+  #  name: "Energy production tarif 1"
+  #  min: 0
+  #  max: 10000
+  #  step: 0.1
+  #  unit_of_measurement: "kWh"
+  #  mode: box
+  #energy_production_tarif_2:
+  #  name: "Energy production tarif 2"
+  #  min: 0
+  #  max: 10000
+  #  step: 0.1
+  #  unit_of_measurement: "kWh"
+  #  mode: box
+    
+utility_meter:
+  electricity_meter_consumption_tariff_1_since_contract_start:
+    unique_id: electricity_meter_consumption_tariff_1_since_contract_start_id
+    # SET YOUR SOURCE SENSOR:
+    source: sensor.energy_consumption_tarif_1
+  electricity_meter_consumption_tariff_2_since_contract_start:
+    unique_id: electricity_meter_consumption_tariff_2_since_contract_start_id
+    # SET YOUR SOURCE SENSOR:
+    source: sensor.energy_consumption_tarif_2
+  electricity_meter_production_tariff_1_since_contract_start:
+    unique_id: electricity_meter_production_tariff_1_since_contract_start_id
+    # SET YOUR SOURCE SENSOR:
+    source: sensor.energy_production_tarif_1
+  electricity_meter_production_tariff_2_since_contract_start:
+    unique_id: electricity_meter_production_tariff_2_since_contract_start_id
+    # SET YOUR SOURCE SENSOR:
+    source: sensor.energy_production_tarif_2
+
+  electricity_meter_consumption_tariff_1_hourly:
+    unique_id: electricity_meter_consumption_tariff_1_hourly_id
+    source: sensor.electricity_meter_consumption_tariff_1_since_contract_start
+    cycle: hourly
+  electricity_meter_consumption_tariff_2_hourly:
+    unique_id: electricity_meter_consumption_tariff_2_hourly_id
+    source: sensor.electricity_meter_consumption_tariff_2_since_contract_start
+    cycle: hourly
+  electricity_meter_production_tariff_1_hourly:
+    unique_id: electricity_meter_production_tariff_1_hourly_id
+    source: sensor.electricity_meter_production_tariff_1_since_contract_start
+    cycle: hourly
+  electricity_meter_production_tariff_2_hourly:
+    unique_id: electricity_meter_production_tariff_2_hourly_id
+    source: sensor.electricity_meter_production_tariff_2_since_contract_start
+    cycle: hourly
+
+  electricity_meter_consumption_tariff_1_cost_total:
+    unique_id: electricity_meter_consumption_tariff_1_cost_total_id
+    source: sensor.electricity_consumption_tariff_1_cost_hourly
+  electricity_meter_consumption_tariff_2_cost_total:
+    unique_id: electricity_meter_consumption_tariff_2_cost_total_id
+    source: sensor.electricity_consumption_tariff_2_cost_hourly
+  electricity_meter_production_tariff_1_profit_total:
+    unique_id: electricity_meter_production_tariff_1_profit_total_id
+    source: sensor.electricity_production_tariff_1_profit_hourly
+  electricity_meter_production_tariff_2_profit_total:
+    unique_id: electricity_meter_production_tariff_2_profit_total_id
+    source: sensor.electricity_production_tariff_2_profit_hourly
+
+    
+template:
+  - sensor:
+      - name: "Electricity Dynamic Price"
+        unique_id: electricity_dynamic_price_id
+        unit_of_measurement: "€"
+        # SET YOUR SOURCE SENSOR:
+        state: >
+            {{ states('sensor.nordpool_kwh_nl_eur_5_10_0') | float(0) }}
+      - name: "Electricity Consumption Tariff 1 Cost Hourly"
+        unique_id: electricity_consumption_tariff_1_cost_hourly_id
+        unit_of_measurement: "€"
+        state: >
+            {{ states('sensor.electricity_meter_consumption_tariff_1_hourly') | float(0) * states('sensor.electricity_dynamic_price_consumption') | float(0) }}
+      - name: "Electricity Consumption Tariff 2 Cost Hourly"
+        unique_id: electricity_consumption_tariff_2_cost_hourly_id
+        unit_of_measurement: "€"
+        state: >
+            {{ states('sensor.electricity_meter_consumption_tariff_2_hourly') | float(0) * states('sensor.electricity_dynamic_price_consumption') | float(0) }}
+      - name: "Electricity Production Tariff 1 Profit Hourly"
+        unique_id: electricity_production_tariff_1_profit_hourly_id
+        unit_of_measurement: "€"
+        state: >
+            {{ states('sensor.electricity_meter_production_tariff_1_hourly') | float(0) * states('sensor.electricity_dynamic_price_production') | float(0) }}
+      - name: "Electricity Production Tariff 2 Profit Hourly"
+        unique_id: electricity_production_tariff_2_profit_hourly_id
+        unit_of_measurement: "€"
+        state: >
+            {{ states('sensor.electricity_meter_production_tariff_2_hourly') | float(0) * states('sensor.electricity_dynamic_price_production') | float(0) }}
+
+      - name: "Electricity Dynamic Price Consumption"
+        unique_id: electricity_dynamic_price_consumption_id
+        unit_of_measurement: "€/kWh"
+        state: >
+          {% set price = states('sensor.electricity_dynamic_price') | float(0) %}
+          {% if price > 0 %}
+            {{ ((price + states('input_number.electricity_consumption_markup_per_kwh') | float(0) + states('input_number.electricity_tax_per_kwh') | float(0)) * (1 + states('input_number.tax_percentage') | float(0) / 100 )) | round(5) }}
+          {% else %}
+            {{ (price + (states('input_number.electricity_consumption_markup_per_kwh') | float(0) + states('input_number.electricity_tax_per_kwh') | float(0)) * (1 + states('input_number.tax_percentage') | float(0) / 100 )) | round(5) }}
+          {% endif %}
+      - name: "Electricity Dynamic Price Production"
+        unique_id: electricity_dynamic_price_production_id
+        unit_of_measurement: "€/kWh"
+        state: >
+          {% set price = states('sensor.electricity_dynamic_price') | float(0) %}
+          {{ (price - (states('input_number.electricity_production_markup_per_kwh') | float(0)) * (1 + states('input_number.tax_percentage') | float(0) / 100)) | round(5) }}
+
+      - name: "Electricity Dynamic Cost Total"
+        unique_id: electricity_dynamic_cost_total_id
+        unit_of_measurement: "€"
+        state: >
+          {{ (states('sensor.electricity_meter_consumption_tariff_1_cost_total') | float(0) + 
+              states('sensor.electricity_meter_consumption_tariff_2_cost_total') | float(0) - 
+              states('sensor.electricity_meter_production_tariff_1_profit_total') | float(0) -
+              states('sensor.electricity_meter_production_tariff_2_profit_total') | float(0)) | round(2) }}
+      # FOR TESTING ONLY
+      #- name: "energy consumption tarif 1"
+      #  unique_id: energy_consumption_tarif_1_id
+      #  unit_of_measurement: "kWh"
+      #  state: > 
+      #    {{ states('input_number.energy_consumption_tarif_1') | float(0) }}
+      #- name: "energy consumption tarif 2"
+      #  unique_id: energy_consumption_tarif_2_id
+      #  unit_of_measurement: "kWh"
+      #  state: > 
+      #    {{ states('input_number.energy_consumption_tarif_2') | float(0) }}
+      #- name: "energy production tarif 1"
+      #  unique_id: energy_production_tarif_1_id
+      #  unit_of_measurement: "kWh"
+      #  state: > 
+      #    {{ states('input_number.energy_production_tarif_1') | float(0) }}
+      #- name: "energy production tarif 2"
+      #  unique_id: energy_production_tarif_2_id
+      #  unit_of_measurement: "kWh"
+      #  state: > 
+      #    {{ states('input_number.energy_production_tarif_2') | float(0) }}
+  
+  
+input_datetime:
+  energycontract_startdate:
+    name: "Start Date Of The Energy Contract"
+    has_date: true
+    has_time: false
+    

@@ -1,0 +1,133 @@
+---
+type: grid
+cards:
+  - type: heading
+    heading: Dynamic Energy Contract
+    heading_style: title
+    icon: mdi:transmission-tower
+  - type: tile
+    entity: sensor.electricity_meter_consumption_tariff_1_since_contract_start
+    features_position: bottom
+    vertical: false
+    name: Consumption Tariff 1
+    color: red
+    icon: mdi:home-import-outline
+  - type: tile
+    entity: sensor.electricity_meter_consumption_tariff_2_since_contract_start
+    features_position: bottom
+    vertical: false
+    name: Consumption Tariff 1
+    color: red
+    icon: mdi:home-import-outline
+  - type: tile
+    entity: sensor.electricity_meter_production_tariff_1_since_contract_start
+    features_position: bottom
+    vertical: false
+    name: Production Tariff 1
+    color: green
+    icon: mdi:home-export-outline
+  - type: tile
+    entity: sensor.electricity_meter_production_tariff_2_since_contract_start
+    features_position: bottom
+    vertical: false
+    name: Production Tariff 2
+    color: green
+    icon: mdi:home-export-outline
+  - type: tile
+    entity: sensor.electricity_dynamic_price_consumption
+    features_position: bottom
+    vertical: false
+    name: Consumption Tariff
+    icon: mdi:cash-multiple
+    color: accent
+  - type: tile
+    entity: sensor.electricity_dynamic_price_production
+    features_position: bottom
+    vertical: false
+    name: Production Tariff
+    icon: mdi:cash-multiple
+    color: accent
+  - type: tile
+    entity: sensor.electricity_dynamic_cost_total
+    features_position: bottom
+    vertical: false
+    name: Contract Cost (Total)
+    icon: mdi:cash-multiple
+    color: indigo
+    grid_options:
+      columns: full
+  - type: custom:apexcharts-card
+    graph_span: 48h
+    header:
+      title: Base Price (EUR/kWh)
+      show: true
+    experimental:
+      color_threshold: true
+    all_series_config:
+      stroke_width: 1
+      color_threshold:
+        - value: -0.15
+          color: 37FF00
+        - value: 0
+          color: 0080FF
+        - value: 0.25
+          color: FF0033
+    apex_config:
+      chart:
+        height: 200px
+    yaxis:
+      - decimals: 2
+        max: ~0.2
+        min: ~0
+    span:
+      start: day
+    now:
+      show: true
+      label: Now
+      color: fff700
+    series:
+      - entity: sensor.nordpool_kwh_nl_eur_5_10_0
+        type: area
+        curve: stepline
+        float_precision: 3
+        extend_to: now
+        data_generator: >
+          let td = entity.attributes.raw_today; let tm =
+          entity.attributes.raw_tomorrow; const repeatLast = (x) => [new
+          Date(x.at(-1)[0]).getTime()+3600000, x.at(-1)[1]]; let dataset = [
+            ...td.map((data, index) => {
+              return [data["start"], data["value"]];
+            }),
+            ...tm.map((data, index) => {
+              return [data["start"], data["value"]];
+            })
+          ]; return [...dataset, repeatLast(dataset)];
+        color: fff
+  - type: tile
+    entity: sensor.electricity_meter_consumption_tariff_1_cost_total
+    features_position: bottom
+    vertical: false
+    name: Consumption Tariff 1 (€)
+    color: red
+    icon: mdi:home-import-outline
+  - type: tile
+    entity: sensor.electricity_meter_consumption_tariff_2_cost_total
+    features_position: bottom
+    vertical: false
+    name: Consumption Tariff 2 (€)
+    color: red
+    icon: mdi:home-import-outline
+  - type: tile
+    entity: sensor.electricity_meter_production_tariff_1_profit_total
+    features_position: bottom
+    vertical: false
+    name: Production Tariff 1 (€)
+    color: green
+    icon: mdi:home-export-outline
+  - type: tile
+    entity: sensor.electricity_meter_production_tariff_2_profit_total
+    features_position: bottom
+    vertical: false
+    name: Consumption Tariff 2 (€)
+    color: green
+    icon: mdi:home-export-outline

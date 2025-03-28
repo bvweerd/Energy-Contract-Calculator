@@ -98,7 +98,7 @@ cards:
             ...td.map((data, index) => {
               return [data["start"], data["value"]];
             }),
-            ...tm.map((data, index) => { 
+            ...tm.map((data, index) => {
               return [data["start"], data["value"]];
             })
           ]; return [...dataset, repeatLast(dataset)];

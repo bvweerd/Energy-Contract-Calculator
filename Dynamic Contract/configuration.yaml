@@ -107,15 +107,28 @@ utility_meter:
   electricity_meter_consumption_tariff_1_cost_total:
     unique_id: electricity_meter_consumption_tariff_1_cost_total_id
     source: sensor.electricity_consumption_tariff_1_cost_hourly
+  electricity_meter_consumption_tariff_1_profit_total:
+    unique_id: electricity_meter_consumption_tariff_1_profit_total_id
+    source: sensor.electricity_consumption_tariff_1_profit_hourly
   electricity_meter_consumption_tariff_2_cost_total:
     unique_id: electricity_meter_consumption_tariff_2_cost_total_id
     source: sensor.electricity_consumption_tariff_2_cost_hourly
+  electricity_meter_consumption_tariff_2_profit_total:
+    unique_id: electricity_meter_consumption_tariff_2_profit_total_id
+    source: sensor.electricity_consumption_tariff_2_profit_hourly
   electricity_meter_production_tariff_1_profit_total:
     unique_id: electricity_meter_production_tariff_1_profit_total_id
     source: sensor.electricity_production_tariff_1_profit_hourly
+  electricity_meter_production_tariff_1_cost_total:
+    unique_id: electricity_meter_production_tariff_1_cost_total_id
+    source: sensor.electricity_production_tariff_1_cost_hourly
   electricity_meter_production_tariff_2_profit_total:
     unique_id: electricity_meter_production_tariff_2_profit_total_id
     source: sensor.electricity_production_tariff_2_profit_hourly
+  electricity_meter_production_tariff_2_cost_total:
+    unique_id: electricity_meter_production_tariff_2_cost_total_id
+    source: sensor.electricity_production_tariff_2_cost_hourly
+
 
 template:
   - sensor:
@@ -129,23 +142,74 @@ template:
         unique_id: electricity_consumption_tariff_1_cost_hourly_id
         unit_of_measurement: "€"
         state: >
+            {% if states('sensor.electricity_meter_consumption_tariff_1_hourly') | float(0) * states('sensor.electricity_dynamic_price_consumption') | float(0) > 0 %}
             {{ states('sensor.electricity_meter_consumption_tariff_1_hourly') | float(0) * states('sensor.electricity_dynamic_price_consumption') | float(0) }}
+            {% else %}
+            {{ 0 }}
+            {% endif %}
+      - name: "Electricity Consumption Tariff 1 Profit Hourly"
+        unique_id: electricity_consumption_tariff_1_profit_hourly_id
+        unit_of_measurement: "€"
+        state: >
+            {% if (states('sensor.electricity_meter_consumption_tariff_1_hourly') | float(0) * states('sensor.electricity_dynamic_price_consumption') | float(0)) < 0 %}
+            {{ (states('sensor.electricity_meter_consumption_tariff_1_hourly') | float(0) * states('sensor.electricity_dynamic_price_consumption') | float(0)) * -1 }}
+            {% else %}
+            {{ 0 }}
+            {% endif %}
       - name: "Electricity Consumption Tariff 2 Cost Hourly"
         unique_id: electricity_consumption_tariff_2_cost_hourly_id
         unit_of_measurement: "€"
         state: >
+            {% if states('sensor.electricity_meter_consumption_tariff_2_hourly') | float(0) * states('sensor.electricity_dynamic_price_consumption') | float(0) > 0 %}
             {{ states('sensor.electricity_meter_consumption_tariff_2_hourly') | float(0) * states('sensor.electricity_dynamic_price_consumption') | float(0) }}
+            {% else %}
+            {{ 0 }}
+            {% endif %}
+      - name: "Electricity Consumption Tariff 2 Profit Hourly"
+        unique_id: electricity_consumption_tariff_2_profit_hourly_id
+        unit_of_measurement: "€"
+        state: >
+            {% if (states('sensor.electricity_meter_consumption_tariff_2_hourly') | float(0) * states('sensor.electricity_dynamic_price_consumption') | float(0)) < 0 %}
+            {{ (states('sensor.electricity_meter_consumption_tariff_2_hourly') | float(0) * states('sensor.electricity_dynamic_price_consumption') | float(0)) * -1 }}
+            {% else %}
+            {{ 0 }}
+            {% endif %}
       - name: "Electricity Production Tariff 1 Profit Hourly"
         unique_id: electricity_production_tariff_1_profit_hourly_id
         unit_of_measurement: "€"
         state: >
+            {% if states('sensor.electricity_meter_production_tariff_1_hourly') | float(0) * states('sensor.electricity_dynamic_price_production') | float(0) > 0 %}
             {{ states('sensor.electricity_meter_production_tariff_1_hourly') | float(0) * states('sensor.electricity_dynamic_price_production') | float(0) }}
+            {% else %}
+            {{ 0 }}
+            {% endif %}
+      - name: "Electricity Production Tariff 1 Cost Hourly"
+        unique_id: electricity_production_tariff_1_cost_hourly_id
+        unit_of_measurement: "€"
+        state: >
+            {% if (states('sensor.electricity_meter_production_tariff_1_hourly') | float(0) * states('sensor.electricity_dynamic_price_production') | float(0)) < 0 %}
+            {{ (states('sensor.electricity_meter_production_tariff_1_hourly') | float(0) * states('sensor.electricity_dynamic_price_production') | float(0)) * -1 }}
+            {% else %}
+            {{ 0 }}
+            {% endif %}
       - name: "Electricity Production Tariff 2 Profit Hourly"
         unique_id: electricity_production_tariff_2_profit_hourly_id
         unit_of_measurement: "€"
         state: >
+            {% if states('sensor.electricity_meter_production_tariff_2_hourly') | float(0) * states('sensor.electricity_dynamic_price_production') | float(0) > 0 %}
             {{ states('sensor.electricity_meter_production_tariff_2_hourly') | float(0) * states('sensor.electricity_dynamic_price_production') | float(0) }}
-
+            {% else %}
+            {{ 0 }}
+            {% endif %}
+      - name: "Electricity Production Tariff 2 Cost Hourly"
+        unique_id: electricity_production_tariff_2_cost_hourly_id
+        unit_of_measurement: "€"
+        state: >
+            {% if (states('sensor.electricity_meter_production_tariff_2_hourly') | float(0) * states('sensor.electricity_dynamic_price_production') | float(0)) < 0 %}
+            {{ (states('sensor.electricity_meter_production_tariff_2_hourly') | float(0) * states('sensor.electricity_dynamic_price_production') | float(0)) * -1 }}
+            {% else %}
+            {{ 0 }}
+            {% endif %}
       - name: "Electricity Dynamic Price Consumption"
         unique_id: electricity_dynamic_price_consumption_id
         unit_of_measurement: "€/kWh"
@@ -168,9 +232,13 @@ template:
         unit_of_measurement: "€"
         state: >
           {{ (states('sensor.electricity_meter_consumption_tariff_1_cost_total') | float(0) +
-              states('sensor.electricity_meter_consumption_tariff_2_cost_total') | float(0) -
+              states('sensor.electricity_meter_consumption_tariff_2_cost_total') | float(0) +
+              states('sensor.electricity_meter_production_tariff_1_cost_total') | float(0) +
+              states('sensor.electricity_meter_production_tariff_2_cost_total') | float(0) -
               states('sensor.electricity_meter_production_tariff_1_profit_total') | float(0) -
-              states('sensor.electricity_meter_production_tariff_2_profit_total') | float(0)) | round(2) }}
+              states('sensor.electricity_meter_production_tariff_2_profit_total') | float(0) -
+              states('sensor.electricity_meter_consumption_tariff_1_profit_total') | float(0) -
+              states('sensor.electricity_meter_consumption_tariff_2_profit_total') | float(0)) | round(2) }}
 #      # FOR TESTING ONLY
 #      - name: "energy consumption tarif 1"
 #        unique_id: energy_consumption_tarif_1_id

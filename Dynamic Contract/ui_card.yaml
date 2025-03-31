@@ -1,4 +1,3 @@
----
 type: grid
 cards:
   - type: heading
@@ -107,27 +106,55 @@ cards:
     entity: sensor.electricity_meter_consumption_tariff_1_cost_total
     features_position: bottom
     vertical: false
-    name: Consumption Tariff 1 (€)
+    name: Consumption Cost Tariff 1 (€)
     color: red
     icon: mdi:home-import-outline
   - type: tile
     entity: sensor.electricity_meter_consumption_tariff_2_cost_total
     features_position: bottom
     vertical: false
-    name: Consumption Tariff 2 (€)
+    name: Consumption Cost Tariff 2 (€)
     color: red
+    icon: mdi:home-import-outline
+  - type: tile
+    entity: sensor.electricity_meter_consumption_tariff_1_profit_total
+    features_position: bottom
+    vertical: false
+    name: Consumption Profit Tariff 1 (€)
+    color: green
+    icon: mdi:home-import-outline
+  - type: tile
+    entity: sensor.electricity_meter_consumption_tariff_2_profit_total
+    features_position: bottom
+    vertical: false
+    name: Consumption Profit Tariff 2 (€)
+    color: green
     icon: mdi:home-import-outline
   - type: tile
     entity: sensor.electricity_meter_production_tariff_1_profit_total
     features_position: bottom
     vertical: false
-    name: Production Tariff 1 (€)
+    name: Production Profit Tariff 1 (€)
     color: green
     icon: mdi:home-export-outline
   - type: tile
     entity: sensor.electricity_meter_production_tariff_2_profit_total
     features_position: bottom
     vertical: false
-    name: Consumption Tariff 2 (€)
+    name: Production Profit Tariff 2 (€)
     color: green
+    icon: mdi:home-export-outline
+  - type: tile
+    entity: sensor.electricity_meter_production_tariff_1_cost_total
+    features_position: bottom
+    vertical: false
+    name: Production Cost Tariff 1 (€)
+    color: red
+    icon: mdi:home-export-outline
+  - type: tile
+    entity: sensor.electricity_meter_production_tariff_2_cost_total
+    features_position: bottom
+    vertical: false
+    name: Production Cost Tariff 2 (€)
+    color: red
     icon: mdi:home-export-outline
